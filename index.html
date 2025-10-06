@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder - Discover Delicious Recipes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-utensils"></i>
+                <h1>Recipe Finder</h1>
+            </div>
+            <div class="nav-actions">
+                <button id="favorites-btn" class="nav-btn" title="View Favorites">
+                    <i class="fas fa-heart"></i>
+                    <span class="favorites-count">0</span>
+                </button>
+                <button id="theme-toggle" class="nav-btn" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <h2>Find Your Perfect Recipe</h2>
+                <p>Search by dish name or select ingredients to discover amazing recipes</p>
+                
+                <!-- Search Tabs -->
+                <div class="search-tabs">
+                    <button id="dish-tab" class="tab-btn active">
+                        <i class="fas fa-search"></i>
+                        Search by Dish
+                    </button>
+                    <button id="ingredients-tab" class="tab-btn">
+                        <i class="fas fa-apple-alt"></i>
+                        Search by Ingredients
+                    </button>
+                </div>
+
+                <!-- Dish Search -->
+                <div id="dish-search" class="search-tab-content active">
+                    <div class="search-box">
+                        <input type="text" id="dish-input" placeholder="Enter dish name (e.g., pasta, chicken curry, pizza...)">
+                        <button id="dish-search-btn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ingredients Search -->
+                <div id="ingredients-search" class="search-tab-content">
+                    <div class="ingredients-container">
+                        <div class="ingredients-input">
+                            <input type="text" id="ingredient-input" placeholder="Add ingredients (e.g., chicken, tomato, onion...)">
+                            <button id="add-ingredient-btn" class="add-btn">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div id="selected-ingredients" class="selected-ingredients"></div>
+                        <button id="ingredients-search-btn" class="search-btn" disabled>
+                            <i class="fas fa-search"></i>
+                            Search Recipes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <h4>Dietary Preferences</h4>
+                    <div class="filters-grid">
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="vegetarian" value="vegetarian">
+                            <span class="checkmark"></span>
+                            Vegetarian
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="vegan" value="vegan">
+                            <span class="checkmark"></span>
+                            Vegan
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="gluten-free" value="glutenFree">
+                            <span class="checkmark"></span>
+                            Gluten-Free
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" id="keto" value="ketogenic">
+                            <span class="checkmark"></span>
+                            Keto
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="loading-spinner"></div>
+            <p>Searching for delicious recipes...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="error-message hidden">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Something went wrong. Please try again.</p>
+        </div>
+
+        <!-- Results Section -->
+        <section id="results-section" class="results-section hidden">
+            <div class="results-header">
+                <h3 id="results-title">Search Results</h3>
+                <div class="results-actions">
+                    <select id="sort-select" class="sort-select">
+                        <option value="popularity">Most Popular</option>
+                        <option value="time">Cooking Time</option>
+                        <option value="healthScore">Health Score</option>
+                    </select>
+                </div>
+            </div>
+            <div id="recipes-grid" class="recipes-grid"></div>
+            <div class="pagination">
+                <button id="prev-btn" class="pagination-btn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    Previous
+                </button>
+                <span id="page-info" class="page-info">Page 1</span>
+                <button id="next-btn" class="pagination-btn">
+                    Next
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Favorites Section -->
+        <section id="favorites-section" class="favorites-section hidden">
+            <div class="favorites-header">
+                <h3>Your Favorite Recipes</h3>
+                <button id="close-favorites" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="favorites-grid" class="recipes-grid"></div>
+            <div id="no-favorites" class="no-favorites hidden">
+                <i class="fas fa-heart-broken"></i>
+                <p>No favorite recipes yet</p>
+                <p>Start exploring and save your favorites!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Recipe Detail Modal -->
+    <div id="recipe-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Recipe Title</h2>
+                <div class="modal-actions">
+                    <button id="modal-favorite-btn" class="favorite-btn">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <button id="close-modal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-image-container">
+                    <img id="modal-image" src="" alt="Recipe Image">
+                    <div class="recipe-badges">
+                        <span id="ready-time" class="badge">
+                            <i class="fas fa-clock"></i>
+                            <span></span>
+                        </span>
+                        <span id="servings" class="badge">
+                            <i class="fas fa-users"></i>
+                            <span></span>
+                        </span>
+                        <span id="health-score" class="badge">
+                            <i class="fas fa-heart"></i>
+                            <span></span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="recipe-details">
+                    <div class="recipe-summary">
+                        <h3>Summary</h3>
+                        <div id="recipe-summary-text"></div>
+                    </div>
+
+                    <div class="recipe-tabs">
+                        <button class="recipe-tab-btn active" data-tab="ingredients">
+                            <i class="fas fa-list"></i>
+                            Ingredients
+                        </button>
+                        <button class="recipe-tab-btn" data-tab="instructions">
+                            <i class="fas fa-clipboard-list"></i>
+                            Instructions
+                        </button>
+                        <button class="recipe-tab-btn" data-tab="nutrition">
+                            <i class="fas fa-chart-pie"></i>
+                            Nutrition
+                        </button>
+                    </div>
+
+                    <div id="ingredients-tab" class="recipe-tab-content active">
+                        <ul id="ingredients-list"></ul>
+                    </div>
+
+                    <div id="instructions-tab" class="recipe-tab-content">
+                        <ol id="instructions-list"></ol>
+                    </div>
+
+                    <div id="nutrition-tab" class="recipe-tab-content">
+                        <div id="nutrition-info" class="nutrition-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Modal removed - using hardcoded key -->
+
+    <script src="script.js"></script>
+</body>
+</html>
